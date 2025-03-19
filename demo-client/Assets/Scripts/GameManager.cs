@@ -145,9 +145,9 @@ public class GameManager : MonoBehaviour
         if (!IsConnected()) return;
         
         // Tell the server to update the simulation size as the screen changes dimensions
-        if (Display.main.systemWidth != lastWidth || Display.main.systemHeight != lastHeight)
+        if (Screen.width != lastWidth || Screen.height != lastHeight)
         {
-            Conn.Reducers.SetArenaSize(Display.main.systemWidth, Display.main.systemHeight);
+            Conn.Reducers.SetArenaSize(Screen.width, Screen.height);
             lastWidth = Screen.width;
             lastHeight = Screen.height;
         }

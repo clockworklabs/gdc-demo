@@ -1,6 +1,7 @@
 use spacetimedb::{ReducerContext, Table, SpacetimeType};
 use rand::prelude::*;
 use std::time::Duration;
+use spacetimedb::log_stopwatch::LogStopwatch;
 
 #[derive(SpacetimeType, Clone, Debug)]
 pub struct StdbVector2 {
@@ -95,6 +96,8 @@ pub fn add_circles(ctx: &ReducerContext, count: u32) {
 
 #[spacetimedb::reducer]
 pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
+    let watch = spacetimedb::log_stopwatch::LogStopwatch::new("physics");
+
     // Time step for physics simulation
     const DT: f32 = 1.0 / 60.0;
     let arena_config = ctx.db.arena_config().id().find(0).unwrap();
