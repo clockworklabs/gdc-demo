@@ -83,8 +83,8 @@ pub fn add_circles(ctx: &ReducerContext, count: u32) {
         let radius = rng.gen_range(20.0..50.0);
         let x = rng.gen_range(radius..arena_config.width - radius);
         let y = rng.gen_range(radius..arena_config.height - radius);
-        let vx = rng.gen_range(-20.0..20.0);
-        let vy = rng.gen_range(-20.0..20.0);
+        let vx = rng.gen_range(-100.0..100.0);
+        let vy = rng.gen_range(-100.0..100.0);
         ctx.db.circle().insert(Circle { 
             circle_id: 0,  // Auto-incremented by SpacetimeDB
             pos: StdbVector2 { x, y }, 
