@@ -192,8 +192,8 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
                 
                 // Separate overlapping circles
                 let overlap = min_distance - distance;
-                let separation_x = (overlap * nx * SEPARATION_FACTOR);
-                let separation_y = (overlap * ny * SEPARATION_FACTOR);
+                let separation_x = overlap * nx * SEPARATION_FACTOR;
+                let separation_y = overlap * ny * SEPARATION_FACTOR;
                 
                 updated_circles[i].pos.x -= separation_x;
                 updated_circles[i].pos.y -= separation_y;
@@ -202,16 +202,22 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
                 
                 // Only apply collision response if circles are moving toward each other
                 if velocity_along_normal < 0.0 {
-                    // Calculate impulse for elastic collision
-                    let impulse = -velocity_along_normal;
-                    let impulse_x = impulse * nx;
-                    let impulse_y = impulse * ny;
+                    // Calculate masses based on circle areas (proportional to radius squared)
+                    let mass1 = updated_circles[i].radius * updated_circles[i].radius;
+                    let mass2 = updated_circles[j].radius * updated_circles[j].radius;
+                    let mass_sum = mass1 + mass2;
+
+                    // Calculate impulse scalar with mass
+                    let restitution = 1.0; // Perfect elasticity for bouncy effect
+                    let impulse = -(1.0 + restitution) * velocity_along_normal;
+                    let impulse1 = impulse * mass2 / mass_sum;
+                    let impulse2 = impulse * mass1 / mass_sum;
                     
-                    // Update velocities
-                    updated_circles[i].velocity.x -= impulse_x;
-                    updated_circles[i].velocity.y -= impulse_y;
-                    updated_circles[j].velocity.x += impulse_x;
-                    updated_circles[j].velocity.y += impulse_y;
+                    // Apply impulse
+                    updated_circles[i].velocity.x -= impulse1 * nx;
+                    updated_circles[i].velocity.y -= impulse1 * ny;
+                    updated_circles[j].velocity.x += impulse2 * nx;
+                    updated_circles[j].velocity.y += impulse2 * ny;
                 }
             }
         }
