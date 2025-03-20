@@ -96,7 +96,7 @@ pub fn add_circles(ctx: &ReducerContext, count: u32) {
 
 #[spacetimedb::reducer]
 pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
-    let watch = spacetimedb::log_stopwatch::LogStopwatch::new("physics");
+    let watch = LogStopwatch::new("physics");
 
     // Time step for physics simulation
     const DT: f32 = 1.0 / 60.0;
@@ -135,6 +135,8 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
         // Update the circle in the database
         ctx.db.circle().circle_id().update(updated_circle);
     }
+
+    watch.end();
 }
 
 #[spacetimedb::reducer]
