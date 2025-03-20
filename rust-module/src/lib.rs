@@ -99,7 +99,7 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
     let watch = LogStopwatch::new("physics");
 
     // Time step for physics simulation
-    const DT: f32 = 1.0 / 60.0;
+    const DELTA_TIME: f32 = 1.0 / 60.0;
     let arena_config = ctx.db.arena_config().id().find(0).unwrap();
     
     // Update each circle's position and handle bouncing
@@ -107,8 +107,8 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
         let mut updated_circle = circle.clone();
         
         // Update position based on velocity
-        updated_circle.pos.x += circle.velocity.x * DT;
-        updated_circle.pos.y += circle.velocity.y * DT;
+        updated_circle.pos.x += circle.velocity.x * DELTA_TIME;
+        updated_circle.pos.y += circle.velocity.y * DELTA_TIME;
         
         // Check for collisions with arena boundaries
         // Right wall
