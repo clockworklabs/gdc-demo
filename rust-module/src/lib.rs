@@ -66,11 +66,11 @@ pub fn identity_disconnected(_ctx: &ReducerContext) {
 #[spacetimedb::reducer]
 pub fn add_circle(ctx: &ReducerContext, pos: StdbVector2, radius: f32) {
     log::info!("Adding circle at {:?} with radius {}", pos, radius);
-    ctx.db.circle().insert(Circle { 
+    ctx.db.circle().insert(Circle {
         circle_id: 0,  // Auto-incremented by SpacetimeDB
-        pos, 
-        velocity: StdbVector2 { x: 0.0, y: 0.0 }, 
-        radius 
+        pos,
+        velocity: StdbVector2 { x: 0.0, y: 0.0 },
+        radius
     });
 }
 
@@ -85,11 +85,11 @@ pub fn add_circles(ctx: &ReducerContext, count: u32) {
         let y = rng.gen_range(radius..arena_config.height - radius);
         let vx = rng.gen_range(-100.0..100.0);
         let vy = rng.gen_range(-100.0..100.0);
-        ctx.db.circle().insert(Circle { 
+        ctx.db.circle().insert(Circle {
             circle_id: 0,  // Auto-incremented by SpacetimeDB
-            pos: StdbVector2 { x, y }, 
-            velocity: StdbVector2 { x: vx, y: vy }, 
-            radius 
+            pos: StdbVector2 { x, y },
+            velocity: StdbVector2 { x: vx, y: vy },
+            radius
         });
     }
 }
@@ -101,15 +101,15 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
     // Time step for physics simulation
     const DELTA_TIME: f32 = 1.0 / 60.0;
     let arena_config = ctx.db.arena_config().id().find(0).unwrap();
-    
+
     // Update each circle's position and handle bouncing
     for circle in ctx.db.circle().iter() {
         let mut updated_circle = circle.clone();
-        
+
         // Update position based on velocity
         updated_circle.pos.x += circle.velocity.x * DELTA_TIME;
         updated_circle.pos.y += circle.velocity.y * DELTA_TIME;
-        
+
         // Check for collisions with arena boundaries
         // Right wall
         if updated_circle.pos.x + circle.radius > arena_config.width {
@@ -131,7 +131,7 @@ pub fn simulate_physics(ctx: &ReducerContext, _timer: PhysicsTimer) {
             updated_circle.pos.y = circle.radius;
             updated_circle.velocity.y = -circle.velocity.y;
         }
-        
+
         // Update the circle in the database
         ctx.db.circle().circle_id().update(updated_circle);
     }
