@@ -10,7 +10,7 @@ pub struct StdbVector2 {
 }
 
 #[derive(Clone)]
-#[spacetimedb::table(name = circle, public)]
+#[spacetimedb::table(accessor = circle, public)]
 pub struct Circle {
     #[primary_key]
     #[auto_inc]
@@ -20,7 +20,7 @@ pub struct Circle {
     radius: f32
 }
 
-#[spacetimedb::table(name = physics_timer, scheduled(simulate_physics))]
+#[spacetimedb::table(accessor = physics_timer, scheduled(simulate_physics))]
 pub struct PhysicsTimer {
     #[primary_key]
     #[auto_inc]
@@ -28,9 +28,9 @@ pub struct PhysicsTimer {
     scheduled_at: spacetimedb::ScheduleAt,
 }
 
-#[spacetimedb::table(name = arena_config)]
+#[spacetimedb::table(accessor = arena_config)]
 pub struct ArenaConfig {
-    #[unique]
+    #[primary_key]
     id: u32,
     width: f32,
     height: f32,
@@ -83,8 +83,8 @@ pub fn add_circles(ctx: &ReducerContext, count: u32) {
         let radius = rng.gen_range(20.0..50.0);
         let x = rng.gen_range(radius..arena_config.width - radius);
         let y = rng.gen_range(radius..arena_config.height - radius);
-        let vx = rng.gen_range(-100.0..100.0);
-        let vy = rng.gen_range(-100.0..100.0);
+        let vx = rng.gen_range(-200.0..200.0);
+        let vy = rng.gen_range(-200.0..200.0);
         ctx.db.circle().insert(Circle {
             circle_id: 0,  // Auto-incremented by SpacetimeDB
             pos: StdbVector2 { x, y },
