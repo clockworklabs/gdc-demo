@@ -17,12 +17,23 @@ namespace SpacetimeDB.Types
 
         public void SetArenaSize(float width, float height)
         {
-            conn.InternalCallReducer(new Reducer.SetArenaSize(width, height), this.SetCallReducerFlags.SetArenaSizeFlags);
+            conn.InternalCallReducer(new Reducer.SetArenaSize(width, height));
         }
 
         public bool InvokeSetArenaSize(ReducerEventContext ctx, Reducer.SetArenaSize args)
         {
-            if (OnSetArenaSize == null) return false;
+            if (OnSetArenaSize == null)
+            {
+                if (InternalOnUnhandledReducerError != null)
+                {
+                    switch (ctx.Event.Status)
+                    {
+                        case Status.Failed(var reason): InternalOnUnhandledReducerError(ctx, new Exception(reason)); break;
+                        case Status.OutOfEnergy(var _): InternalOnUnhandledReducerError(ctx, new Exception("out of energy")); break;
+                    }
+                }
+                return false;
+            }
             OnSetArenaSize(
                 ctx,
                 args.Width,
@@ -58,11 +69,5 @@ namespace SpacetimeDB.Types
 
             string IReducerArgs.ReducerName => "set_arena_size";
         }
-    }
-
-    public sealed partial class SetReducerFlags
-    {
-        internal CallReducerFlags SetArenaSizeFlags;
-        public void SetArenaSize(CallReducerFlags flags) => SetArenaSizeFlags = flags;
     }
 }

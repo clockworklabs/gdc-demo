@@ -17,12 +17,23 @@ namespace SpacetimeDB.Types
 
         public void AddCircles(uint count)
         {
-            conn.InternalCallReducer(new Reducer.AddCircles(count), this.SetCallReducerFlags.AddCirclesFlags);
+            conn.InternalCallReducer(new Reducer.AddCircles(count));
         }
 
         public bool InvokeAddCircles(ReducerEventContext ctx, Reducer.AddCircles args)
         {
-            if (OnAddCircles == null) return false;
+            if (OnAddCircles == null)
+            {
+                if (InternalOnUnhandledReducerError != null)
+                {
+                    switch (ctx.Event.Status)
+                    {
+                        case Status.Failed(var reason): InternalOnUnhandledReducerError(ctx, new Exception(reason)); break;
+                        case Status.OutOfEnergy(var _): InternalOnUnhandledReducerError(ctx, new Exception("out of energy")); break;
+                    }
+                }
+                return false;
+            }
             OnAddCircles(
                 ctx,
                 args.Count
@@ -51,11 +62,5 @@ namespace SpacetimeDB.Types
 
             string IReducerArgs.ReducerName => "add_circles";
         }
-    }
-
-    public sealed partial class SetReducerFlags
-    {
-        internal CallReducerFlags AddCirclesFlags;
-        public void AddCircles(CallReducerFlags flags) => AddCirclesFlags = flags;
     }
 }

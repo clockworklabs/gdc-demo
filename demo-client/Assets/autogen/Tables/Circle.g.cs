@@ -36,4 +36,30 @@ namespace SpacetimeDB.Types
 
         public readonly CircleHandle Circle;
     }
+
+    public sealed class CircleCols
+    {
+        public global::SpacetimeDB.Col<Circle, uint> CircleId { get; }
+        public global::SpacetimeDB.Col<Circle, StdbVector2> Pos { get; }
+        public global::SpacetimeDB.Col<Circle, StdbVector2> Velocity { get; }
+        public global::SpacetimeDB.Col<Circle, float> Radius { get; }
+
+        public CircleCols(string tableName)
+        {
+            CircleId = new global::SpacetimeDB.Col<Circle, uint>(tableName, "circle_id");
+            Pos = new global::SpacetimeDB.Col<Circle, StdbVector2>(tableName, "pos");
+            Velocity = new global::SpacetimeDB.Col<Circle, StdbVector2>(tableName, "velocity");
+            Radius = new global::SpacetimeDB.Col<Circle, float>(tableName, "radius");
+        }
+    }
+
+    public sealed class CircleIxCols
+    {
+        public global::SpacetimeDB.IxCol<Circle, uint> CircleId { get; }
+
+        public CircleIxCols(string tableName)
+        {
+            CircleId = new global::SpacetimeDB.IxCol<Circle, uint>(tableName, "circle_id");
+        }
+    }
 }

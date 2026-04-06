@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "com.clockworklabs.spacetimedbsdk": {
-      "version": "https://github.com/clockworklabs/com.clockworklabs.spacetimedbsdk.git",
+      "version": "https://github.com/clockworklabs/com.clockworklabs.spacetimedbsdk.git#v2.1.0",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "437b2d014d9713b6ee595266eb4e24d6cca0007e"
+      "hash": "0bb3abb3ef67e93573d752b6b040a2337ef20f64"
     },
     "com.unity.2d.animation": {
       "version": "9.1.1",

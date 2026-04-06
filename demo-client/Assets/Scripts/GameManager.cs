@@ -10,8 +10,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    const string DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
-    const string DEFAULT_MODULE_NAME = "gdc-demo";
+    const string DEFAULT_SERVER_URL = "https://maincloud.spacetimedb.com";
+    const string DEFAULT_MODULE_NAME = "cmu-demo";
     
     public TMP_InputField hostAddressInput;
     public TMP_InputField moduleNameInput;
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
             .OnConnectError(HandleConnectError)
             .OnDisconnect(HandleDisconnect)
             .WithUri(hostAddressInput.text)
-            .WithModuleName(moduleNameInput.text);
+            .WithDatabaseName(moduleNameInput.text);
 
         // If the user has a SpacetimeDB auth token stored in the Unity PlayerPrefs,
         // we can use it to authenticate the connection.

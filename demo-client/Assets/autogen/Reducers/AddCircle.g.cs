@@ -12,17 +12,28 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void AddCircleHandler(ReducerEventContext ctx, StdbVector2 pos, float radius);
+        public delegate void AddCircleHandler(ReducerEventContext ctx, SpacetimeDB.Types.StdbVector2 pos, float radius);
         public event AddCircleHandler? OnAddCircle;
 
-        public void AddCircle(StdbVector2 pos, float radius)
+        public void AddCircle(SpacetimeDB.Types.StdbVector2 pos, float radius)
         {
-            conn.InternalCallReducer(new Reducer.AddCircle(pos, radius), this.SetCallReducerFlags.AddCircleFlags);
+            conn.InternalCallReducer(new Reducer.AddCircle(pos, radius));
         }
 
         public bool InvokeAddCircle(ReducerEventContext ctx, Reducer.AddCircle args)
         {
-            if (OnAddCircle == null) return false;
+            if (OnAddCircle == null)
+            {
+                if (InternalOnUnhandledReducerError != null)
+                {
+                    switch (ctx.Event.Status)
+                    {
+                        case Status.Failed(var reason): InternalOnUnhandledReducerError(ctx, new Exception(reason)); break;
+                        case Status.OutOfEnergy(var _): InternalOnUnhandledReducerError(ctx, new Exception("out of energy")); break;
+                    }
+                }
+                return false;
+            }
             OnAddCircle(
                 ctx,
                 args.Pos,
@@ -59,11 +70,5 @@ namespace SpacetimeDB.Types
 
             string IReducerArgs.ReducerName => "add_circle";
         }
-    }
-
-    public sealed partial class SetReducerFlags
-    {
-        internal CallReducerFlags AddCircleFlags;
-        public void AddCircle(CallReducerFlags flags) => AddCircleFlags = flags;
     }
 }
